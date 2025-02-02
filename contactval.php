@@ -13,7 +13,7 @@
 <body>
     
 <?php
-include 'db_connect.php'; // Include the database connection file
+include  'db_connect.php'; // Include the database connection file
 
 // Define variables and set empty values
 $StudnumErr = $StudnameErr = $deptErr = $emailErr = "";
