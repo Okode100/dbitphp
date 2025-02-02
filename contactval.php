@@ -13,49 +13,58 @@
 <body>
     
 <?php
-    
-    // define variables and set to empty values
+include 'db_connect.php'; // Include the database connection file
 
-    $StudnumErr = $StudnameErr = $deptErr = $emailErr  = "";
-    $name = $email = $gender = $comment = $website = "";
-    $Studnum = $StudName = $dept = $email  = "";
+// Define variables and set empty values
+$StudnumErr = $StudnameErr = $deptErr = $emailErr = "";
+$StudNum = $StudName = $dept = $email = "";
 
-    
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-      if (empty($_POST["StudNum"])) {
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (empty($_POST["StudNum"])) {
         $StudnumErr = "Student Number is required";
-      } else {
-        $Studnum = test_input($_POST["StudNum"]);
-      }
-
-      if (empty($_POST["StudName"])) {
-        $StudnameErr = " Student name is required";
-      } else {
-        $StudName = test_input($_POST["StudName"]);
-      }
-
-      if (empty($_POST["dept"])) {
-        $deptErr = "Department Name is required";
-      } else {
-        $dept = test_input($_POST["dept"]);
-      }
-
-      if (empty($_POST["email"])) {
-        $emailErr = "Email is required";
-      } else {
-        $email = test_input($_POST["email"]);
-      }
-
+    } else {
+        $StudNum = test_input($_POST["StudNum"]);
     }
 
-    function test_input($data) 
-        {
-          $data = trim($data);
-          $data = stripslashes($data);
-          $data = htmlspecialchars($data);
-          return $data;
+    if (empty($_POST["StudName"])) {
+        $StudnameErr = "Student Name is required";
+    } else {
+        $StudName = test_input($_POST["StudName"]);
+    }
+
+    if (empty($_POST["dept"])) {
+        $deptErr = "Department is required";
+    } else {
+        $dept = test_input($_POST["dept"]);
+    }
+
+    if (empty($_POST["email"])) {
+        $emailErr = "Email is required";
+    } else if (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)) {
+        $emailErr = "Invalid email format";
+    } else {
+        $email = test_input($_POST["email"]);
+    }
+
+    // If no errors, insert into database
+    if ($StudnumErr == "" && $StudnameErr == "" && $deptErr == "" && $emailErr == "") {
+        $sql = "INSERT INTO students (student_number, student_name, department, email) 
+                VALUES ('$StudNum', '$StudName', '$dept', '$email')";
+
+        if ($conn->query($sql) === TRUE) {
+            echo "<p>Record added successfully!</p>";
+        } else {
+            echo "Error: " . $conn->error;
         }
+    }
+}
+
+function test_input($data) {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
+}
 ?>
 <section>
     
